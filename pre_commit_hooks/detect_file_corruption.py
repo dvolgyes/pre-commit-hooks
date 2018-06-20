@@ -222,12 +222,14 @@ def main(argv=None):
         ftype = mime.split('/')[0]
 
         if args.magic:
-            if extension not in IGNORE_LIST_MAGIC:
-                all_ext = mimetypes.guess_all_extensions(mime)
-                if extension not in all_ext and len(extension)>0:
-                    print('  Mismatched type ({}) and extension: {}'.format(mime, fname))
-                    return_code = 1
-                    continue
+            if len(extension)>0:
+                print('extension is:',extension)
+                if extension not in IGNORE_LIST_MAGIC:
+                    all_ext = mimetypes.guess_all_extensions(mime)
+                    if extension not in all_ext:
+                        print('  Mismatched type ({}) and extension: {}'.format(mime, fname))
+                        return_code = 1
+                        continue
 
             if args.image:
                 if ftype == 'image':
