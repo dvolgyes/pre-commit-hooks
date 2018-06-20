@@ -14,7 +14,7 @@ def check_general(ftype, fn, cmds):
     try:
         cmd_output(*cmds)
     except:
-        print('Corrupt {} file: {}'.format(ftype, fn))
+        print('  Corrupt {} file: {}'.format(ftype, fn))
         return False
     return True
 
@@ -51,14 +51,14 @@ def check_general_image(fn):
     return check_general('image', fn, ['convert', fn, '/dev/null'])
 
 
-def check_with_ffmpeg(fn):
+def check_with_ffmpeg(ftype,fn):
     try:
         sout, serr = cmd_output('ffmpeg', '-v', 'error', '-i', fn, '-f', 'null', '-',)
         if len(serr.trim()) > 0:
-            print('Corrupt video file: {}'.format(fn))
+            print('  Corrupt {} file: {}'.format(ftype,fn))
             return False
     except:
-        print('Corrupt video file: {}'.format(fn))
+        print('  Corrupt {} file: {}'.format(ftype,fn))
         return False
     return True
 
@@ -67,16 +67,15 @@ def check_jpeg(fn):
     try:
         sout, serr = cmd_output('jpeginfo', fn)
         if len(serr.trim()) > 0:
-            print('Corrupt JPEG file: {}'.format(fn))
+            print('  Corrupt JPEG file: {}'.format(fn))
             return False
     except:
-        print('Corrupt JPEG file: {}'.format(fn))
+        print('  Corrupt JPEG file: {}'.format(fn))
         return False
     return True
 
 
 def main(argv=None):
-    print('HERE PRINT',file=sys.stderr)
     return_code = 0
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -182,7 +181,6 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     for fname in args.filenames:
-        print('FILE:',fname)
         low = fname.lower()
         extension = "."+(low.split('.')[-1])
 
@@ -192,7 +190,7 @@ def main(argv=None):
             mime = magic.from_file(fname, mime=True)
             all_ext = mimetypes.guess_all_extensions(mime)
             if extension not in all_ext:
-                print('Mismatched type ({}) and extension: {}'.format(mime, fname))
+                print('  Mismatched type ({}) and extension: {}'.format(mime, fname))
                 return_code = 1
                 continue
 
@@ -204,12 +202,12 @@ def main(argv=None):
 
             if args.video:
                 if ftype == 'video':
-                    if not check_with_ffmpeg(fname):
+                    if not check_with_ffmpeg('video', fname):
                         return_code = 1
 
             if args.audio:
                 if ftype == 'audio':
-                    if not check_with_ffmpeg(fname):
+                    if not check_with_ffmpeg('audio', fname):
                         return_code = 1
 
             if args.compress:
