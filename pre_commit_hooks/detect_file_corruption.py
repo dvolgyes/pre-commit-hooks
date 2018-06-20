@@ -76,7 +76,7 @@ def check_jpeg(fn):
 
 
 def main(argv=None):
-    sys.stderr('HERE PRINT')
+    print('HERE PRINT',file=sys.stderr)
     return_code = 0
     parser = argparse.ArgumentParser()
     parser.add_argument(
