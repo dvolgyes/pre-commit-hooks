@@ -4,19 +4,81 @@ import argparse
 import os
 import sys
 import magic
-import identify
 from util import cmd_output
+import mimetypes
 
-def check_mp3(filename):
+IGNORE_LIST_MAGIC = ['.bib']
+
+
+def check_general(ftype, fn, cmds):
     try:
-        cmd_output('mp3check','-s','-e',filename)
+        cmd_output(*cmds)
     except:
+        print('Corrupt {} file: {}'.format(ftype, fn))
         return False
     return True
 
+
+def check_mp3(fn):
+    return check_general('mp3', fn, ['mp3check', '-s', '-e', fn])
+
+
+def check_zip(fn):
+    return check_general('zip', fn, ['zip', '-T', fn])
+
+
+def check_gzip(fn):
+    return check_general('gzip', fn, ['gzip', '-t', fn])
+
+
+def check_bzip(fn):
+    return check_general('bzip2', fn, ['bzip2', '-t', fn])
+
+
+def check_xz(fn):
+    return check_general('xz', fn, ['xz', '-t', fn])
+
+
+def check_zstd(fn):
+    return check_general('zstd', fn, ['zstd', '-t', fn])
+
+
+def check_zstd(fn):
+    return check_general('tar', fn, ['tar', '-tf', fn])
+
+
+def check_general_image(fn):
+    return check_general('image', fn, ['convert', fn, '/dev/null'])
+
+
+def check_with_ffmpeg(fn):
+    try:
+        sout, serr = cmd_output('ffmpeg', '-v', 'error', '-i', fn, '-f', 'null', '-',)
+        if len(serr.trim()) > 0:
+            print('Corrupt video file: {}'.format(fn))
+            return False
+    except:
+        print('Corrupt video file: {}'.format(fn))
+        return False
+    return True
+
+
+def check_jpeg(fn):
+    try:
+        sout, serr = cmd_output('jpeginfo', fn)
+        if len(serr.trim()) > 0:
+            print('Corrupt JPEG file: {}'.format(fn))
+            return False
+    except:
+        print('Corrupt JPEG file: {}'.format(fn))
+        return False
+    return True
+
+
 def main(argv=None):
+    return_code = 0
     if argv is None:
-        argv=sys.argv
+        argv = sys.argv[1:]
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--mp3',
@@ -32,15 +94,148 @@ def main(argv=None):
         dest='mp3',
         help='Disable MP3 file integrity check.',
     )
+    parser.add_argument(
+        '--magic',
+        action='store_true',
+        default=True,
+        dest='magic',
+        help='Check consistency betwen file type and extenstion.',
+    )
+    parser.add_argument(
+        '--no-magic',
+        action='store_false',
+        default=True,
+        dest='magic',
+        help='Disable file extension consistency check.',
+    )
+    parser.add_argument(
+        '--general-image',
+        action='store_true',
+        default=True,
+        dest='image',
+        help='Check general image file (ImageMagick).',
+    )
+    parser.add_argument(
+        '--no-general-image',
+        action='store_false',
+        default=True,
+        dest='image',
+        help='Disable general image file integrity test.',
+    )
+    parser.add_argument(
+        '--general-compressed',
+        action='store_true',
+        default=True,
+        dest='compress',
+        help='Check general compressed file. (zip,bz2,gz,xz,zstd).',
+    )
+    parser.add_argument(
+        '--no-general-compressed',
+        action='store_false',
+        default=True,
+        dest='compress',
+        help='Disable general image file integrity test.',
+    )
+    parser.add_argument(
+        '--video',
+        action='store_true',
+        default=True,
+        dest='video',
+        help='Check video file integrity (FFMPEG)',
+    )
+    parser.add_argument(
+        '--no-video',
+        action='store_false',
+        default=True,
+        dest='video',
+        help='Disable video file integrity check.',
+    )
+    parser.add_argument(
+        '--audio',
+        action='store_true',
+        default=True,
+        dest='audio',
+        help='Check audio file integrity (FFMPEG)',
+    )
+    parser.add_argument(
+        '--no-audio',
+        action='store_false',
+        default=True,
+        dest='audio',
+        help='Disable audio file integrity check.',
+    )
+    parser.add_argument(
+        '--jpeg',
+        action='store_true',
+        default=True,
+        dest='jpeg',
+        help='Check video file integrity (mp4,mkv,avi)',
+    )
+    parser.add_argument(
+        '--no-jpeg',
+        action='store_false',
+        default=True,
+        dest='jpeg',
+        help='Disable JPEG file integrity check.',
+    )
 
     parser.add_argument('filenames', nargs='*', help='Filenames to fix')
     args = parser.parse_args(argv)
 
-    for fname in args:
-        if fname.endswith('.mp3')
+    for fname in args.filenames:
+        low = fname.lower()
+        extension = "."+(low.split('.')[-1])
+
+        if args.magic:
+            if extension in IGNORE_LIST_MAGIC:
+                continue
+            mime = magic.from_file(fname, mime=True)
+            all_ext = mimetypes.guess_all_extensions(mime)
+            if extension not in all_ext:
+                print('Mismatched type ({}) and extension: {}'.format(mime, fname))
+                return_code = 1
+                continue
+
+            ftype = mime.split('/')[0]
+            if args.image:
+                if ftype == 'image':
+                    if not check_general_image(fname):
+                        return_code = 1
+
+            if args.video:
+                if ftype == 'video':
+                    if not check_with_ffmpeg(fname):
+                        return_code = 1
+
+            if args.audio:
+                if ftype == 'audio':
+                    if not check_with_ffmpeg(fname):
+                        return_code = 1
+
+            if args.compress:
+                if ftype == 'application/gzip':
+                    if not check_with_gzip(fname):
+                        return_code = 1
+                if ftype == 'application/zip':
+                    if not check_with_gzip(fname):
+                        return_code = 1
+                if ftype == 'application/x-bzip2':
+                    if not check_with_bzip2(fname):
+                        return_code = 1
+                if ftype == 'application/x-xz':
+                    if not check_with_xz(fname):
+                        return_code = 1
+                if ftype == 'application/x-zstd':
+                    if not check_with_zstd(fname):
+                        return_code = 1
+                if ftype == 'application/x-tar':
+                    if not check_with_zstd(fname):
+                        return_code = 1
+
+        if args.mp3 and extension == '.mp3':
             if not check_mp3(fname):
-                return 1
-    return 0
+                return_code = 1
+    return return_code
 
 
 if __name__ == '__main__':
