@@ -77,8 +77,6 @@ def check_jpeg(fn):
 
 def main(argv=None):
     return_code = 0
-    if argv is None:
-        argv = sys.argv[1:]
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--mp3',
