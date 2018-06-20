@@ -4,11 +4,31 @@ import argparse
 import os
 import sys
 import magic
-from .util import cmd_output
+from util import cmd_output
 import mimetypes
 
-IGNORE_LIST_MAGIC = ['.bib','.yml','.yaml']
+IGNORE_LIST_MAGIC = ['.bib','.yml','.yaml','.sh','Makefile']
 
+
+def check_shell_files(fn):
+    try:
+        cmd_output('shellcheck',fn)
+    except:
+        print('  Shellcheck error. Run "shellcheck {}" for details.'.format(fn,))
+        return False
+    return True
+
+def check_optimal_png(fn, simulation=True):
+    if simulation:
+        _, serr= cmd_output('optipng','-simulate','-v',fn)
+    else:
+        _, serr= cmd_output('optipng','-preserve','-clobber',fn)
+    c = serr.find('optimized')
+
+    if c<0:
+        print('  Suboptimal png. Try "optipng {}"'.format(fn))
+        return False
+    return True
 
 def check_general(ftype, fn, cmds):
     try:
@@ -78,6 +98,21 @@ def check_jpeg(fn):
 def main(argv=None):
     return_code = 0
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--opti-png-check',
+        action='store_true',
+        default=True,
+        dest='optipng',
+        help='Check if PNG files are compressible.',
+    )
+    parser.add_argument(
+        '--opti-png-compress',
+        action='store_true',
+        default=False,
+        dest='compresspng',
+        help='Perform PNG compression, if possible.',
+    )
+
     parser.add_argument(
         '--mp3',
         action='store_true',
@@ -183,18 +218,17 @@ def main(argv=None):
     for fname in args.filenames:
         low = fname.lower()
         extension = "."+(low.split('.')[-1])
+        mime = magic.from_file(fname, mime=True)
+        ftype = mime.split('/')[0]
 
         if args.magic:
-            if extension in IGNORE_LIST_MAGIC:
-                continue
-            mime = magic.from_file(fname, mime=True)
-            all_ext = mimetypes.guess_all_extensions(mime)
-            if extension not in all_ext:
-                print('  Mismatched type ({}) and extension: {}'.format(mime, fname))
-                return_code = 1
-                continue
+            if extension not in IGNORE_LIST_MAGIC:
+                all_ext = mimetypes.guess_all_extensions(mime)
+                if extension not in all_ext:
+                    print('  Mismatched type ({}) and extension: {}'.format(mime, fname))
+                    return_code = 1
+                    continue
 
-            ftype = mime.split('/')[0]
             if args.image:
                 if ftype == 'image':
                     if not check_general_image(fname):
@@ -230,9 +264,17 @@ def main(argv=None):
                     if not check_with_zstd(fname):
                         return_code = 1
 
+        if extension=='.sh':
+            if not check_shell_files(fname):
+                return_code = 1
+
         if args.mp3 and extension == '.mp3':
             if not check_mp3(fname):
                 return_code = 1
+        if extension == '.png':
+            if not check_optimal_png(fname,not args.compresspng):
+                return_code = 1
+
     sys.exit(return_code)
 
 
