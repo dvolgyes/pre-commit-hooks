@@ -3,7 +3,7 @@
     description: "Detects the presence of DICOM files which might contain sensitive information."
     entry: detect-dicom
     language: python
-    types: [all]
+    types: [binary]
     # args: []
     # for backward compatibility
     files: ''
