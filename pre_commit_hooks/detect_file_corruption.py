@@ -4,7 +4,7 @@ import argparse
 import os
 import sys
 import magic
-from util import cmd_output
+from .util import cmd_output
 import mimetypes
 
 IGNORE_LIST_MAGIC = ['.bib']
