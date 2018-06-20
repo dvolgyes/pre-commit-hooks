@@ -183,6 +183,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     for fname in args.filenames:
+        print('FILE:',fname)
         low = fname.lower()
         extension = "."+(low.split('.')[-1])
 
