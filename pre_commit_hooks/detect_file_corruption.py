@@ -7,7 +7,7 @@ import magic
 from .util import cmd_output
 import mimetypes
 
-IGNORE_LIST_MAGIC = ['.bib']
+IGNORE_LIST_MAGIC = ['.bib','.yml','.yaml']
 
 
 def check_general(ftype, fn, cmds):
