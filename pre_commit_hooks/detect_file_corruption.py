@@ -4,7 +4,7 @@ import argparse
 import os
 import sys
 import magic
-from util import cmd_output
+from .util import cmd_output
 import mimetypes
 
 IGNORE_LIST_MAGIC = ['.bib','.yml','.yaml','.sh','Makefile']
@@ -96,6 +96,8 @@ def check_jpeg(fn):
 
 
 def main(argv=None):
+    if argv is None:
+        argv = sys.argv[1:]
     return_code = 0
     parser = argparse.ArgumentParser()
     parser.add_argument(
