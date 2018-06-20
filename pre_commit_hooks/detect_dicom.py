@@ -2,7 +2,6 @@
 from __future__ import print_function
 import magic
 import sys
-import magic
 import argparse
 
 def detect_dicom(argv=None):
