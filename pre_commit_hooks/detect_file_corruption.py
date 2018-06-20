@@ -234,6 +234,7 @@ def main(argv=None):
         if args.mp3 and extension == '.mp3':
             if not check_mp3(fname):
                 return_code = 1
+    sys.exit(return_code)
     return return_code
 
 
