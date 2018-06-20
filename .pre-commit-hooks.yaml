@@ -11,9 +11,9 @@
 -   id: detect-file-corruption
     name: "Detect corrupted files."
     description: "Detects corrupted files using various integrity tests."
-    entry: detect-dicom
+    entry: detect-file-corruption
     language: python
-    types: [binary]
+    types: [binary,text]
     # args: []
     # for backward compatibility
     files: ''
