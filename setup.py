@@ -29,7 +29,7 @@ setup(
         'autopep8>=1.3',
         'pyyaml',
         'six',
-        'python-magic',
+#        'python-magic',
     ],
     entry_points={
         'console_scripts': [
