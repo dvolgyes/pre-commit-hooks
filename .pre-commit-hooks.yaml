@@ -150,6 +150,15 @@
     # for backward compatibility
     files: ''
     minimum_pre_commit_version: 0.15.0
+-   id: detect-dicom
+    name: Detect DICOM files.
+    description: Detects the presence of DICOM files which might contain sensitive information.
+    entry: detect-dicom
+    language: python
+    types: [text]
+    # for backward compatibility
+    files: ''
+    minimum_pre_commit_version: 0.15.0
 -   id: detect-private-key
     name: Detect Private Key
     description: Detects the presence of private keys
@@ -159,6 +168,7 @@
     # for backward compatibility
     files: ''
     minimum_pre_commit_version: 0.15.0
+
 -   id: double-quote-string-fixer
     name: Fix double quoted strings
     description: This hook replaces double quoted strings with single quoted strings

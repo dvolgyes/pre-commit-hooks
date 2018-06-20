@@ -100,6 +100,12 @@
     entry: upgrade-your-pre-commit-version
     files: ''
     minimum_pre_commit_version: 0.15.0
+-   id: detect-dicom
+    language: system
+    name: upgrade-your-pre-commit-version
+    entry: upgrade-your-pre-commit-version
+    files: ''
+    minimum_pre_commit_version: 0.15.0
 -   id: detect-private-key
     language: system
     name: upgrade-your-pre-commit-version

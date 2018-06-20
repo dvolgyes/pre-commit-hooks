@@ -66,6 +66,7 @@ Add this to your `.pre-commit-config.yaml`
     non-standard location to fetch configured credentials from. Can be repeated
     multiple times.
 - `detect-private-key` - Checks for the existence of private keys.
+- `detect-dicom` - Checks for the existence of DICOM files.
 - `double-quote-string-fixer` - This hook replaces double quoted strings
   with single quoted strings.
 - `end-of-file-fixer` - Makes sure files end in a newline and only a newline.
