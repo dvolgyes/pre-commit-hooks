@@ -8,3 +8,13 @@
     # for backward compatibility
     files: ''
     minimum_pre_commit_version: 0.15.0
+-   id: detect-file-corruption
+    name: "Detect corrupted files."
+    description: "Detects corrupted files using various integrity tests."
+    entry: detect-dicom
+    language: python
+    types: [binary]
+    # args: []
+    # for backward compatibility
+    files: ''
+    minimum_pre_commit_version: 0.15.0
