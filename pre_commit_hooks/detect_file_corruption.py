@@ -37,8 +37,9 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     for fname in args:
-        if not check_mp3(fname):
-            return 1
+        if fname.endswith('.mp3')
+            if not check_mp3(fname):
+                return 1
     return 0
 
 
