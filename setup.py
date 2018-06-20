@@ -48,7 +48,7 @@ setup(
             'check-yaml = pre_commit_hooks.check_yaml:check_yaml',
             'debug-statement-hook = pre_commit_hooks.debug_statement_hook:main',
             'detect-aws-credentials = pre_commit_hooks.detect_aws_credentials:main',
-            'detect-dicom = pre_commit_hooks.detect_dicom:main',
+            'detect-dicom = pre_commit_hooks.detect_dicom',
             'detect-private-key = pre_commit_hooks.detect_private_key:detect_private_key',
             'double-quote-string-fixer = pre_commit_hooks.string_fixer:main',
             'end-of-file-fixer = pre_commit_hooks.end_of_file_fixer:end_of_file_fixer',
