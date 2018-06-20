@@ -217,14 +217,14 @@ def main(argv=None):
 
     for fname in args.filenames:
         low = fname.lower()
-        extension = "."+(low.split('.')[-1])
+        basename, extension = os.path.splitext(low)
         mime = magic.from_file(fname, mime=True)
         ftype = mime.split('/')[0]
 
         if args.magic:
             if extension not in IGNORE_LIST_MAGIC:
                 all_ext = mimetypes.guess_all_extensions(mime)
-                if extension not in all_ext:
+                if extension not in all_ext and len(extension)>0:
                     print('  Mismatched type ({}) and extension: {}'.format(mime, fname))
                     return_code = 1
                     continue
