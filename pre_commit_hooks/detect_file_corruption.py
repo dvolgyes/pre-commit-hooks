@@ -76,6 +76,7 @@ def check_jpeg(fn):
 
 
 def main(argv=None):
+    sys.stderr('HERE PRINT')
     return_code = 0
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -235,8 +236,8 @@ def main(argv=None):
             if not check_mp3(fname):
                 return_code = 1
     sys.exit(return_code)
-    return return_code
+
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    main()
