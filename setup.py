@@ -33,7 +33,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'detect-dicom = pre_commit_hooks.detect_dicom:main',
+            'detect-dicom = pre_commit_hooks.detect_dicom:detect_dicom',
         ],
     },
 )

@@ -18,8 +18,8 @@ def detect_dicom(argv=None):
     if dicom_files:
         for dicom_file in dicom_files:
             print('DICOM file found: {}'.format(dicom_file))
-        return 1
-    return 0
+        sys.exit(1)
+    sys.exit(0)
 
 if __name__ == '__main__':
-    sys.exit(detect_dicom())
+    detect_dicom()
