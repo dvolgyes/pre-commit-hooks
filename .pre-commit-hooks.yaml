@@ -13,7 +13,7 @@
     description: "Detects corrupted files using various integrity tests."
     entry: detect-file-corruption
     language: python
-    types: [binary,text]
+#    types: [binary,text]
     # args: []
     # for backward compatibility
     files: ''
