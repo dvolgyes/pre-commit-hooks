@@ -225,7 +225,6 @@ def main(argv=None):
 
         if args.magic:
             if len(extension)>0:
-                print('extension is:',extension)
                 if extension not in IGNORE_LIST_MAGIC:
                     all_ext = mimetypes.guess_all_extensions(mime)
                     if extension not in all_ext:
