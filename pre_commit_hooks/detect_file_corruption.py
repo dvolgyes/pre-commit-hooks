@@ -10,14 +10,6 @@ import mimetypes
 IGNORE_LIST_MAGIC = ['.bib','.yml','.yaml','.sh','Makefile']
 
 
-def check_shell_files(fn):
-    try:
-        cmd_output('shellcheck',fn)
-    except:
-        print('  Shellcheck error. Run "shellcheck {}" for details.'.format(fn,))
-        return False
-    return True
-
 def check_optimal_png(fn, simulation=True):
     if simulation:
         _, serr= cmd_output('optipng','-simulate','-v',fn)
@@ -266,10 +258,6 @@ def main(argv=None):
                 if ftype == 'application/x-tar':
                     if not check_with_zstd(fname):
                         return_code = 1
-
-        if extension=='.sh':
-            if not check_shell_files(fname):
-                return_code = 1
 
         if args.mp3 and extension == '.mp3':
             if not check_mp3(fname):
