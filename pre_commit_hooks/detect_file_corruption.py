@@ -210,8 +210,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     for fname in args.filenames:
-        low = fname.lower()
-        basename, extension = os.path.splitext(low)
+        _, extension = os.path.splitext(fname.lower())
         mime = magic.from_file(fname, mime=True)
         ftype = mime.split('/')[0]
 
